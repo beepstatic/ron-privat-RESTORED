@@ -8,8 +8,12 @@ Ron-b-old:ronb:1
 Ayo-b:ronmad-b:1
 Bloodshed-b:hellron-b:1
 Trojan-Virus:ron-usb:2
+Trojan-Virus-old:ron-usb:2
 File-Manipulation:ron-usb:2
+File-Manipulation-old:ron-usb:2
+File-Manipulation-older:ron-usb:2
 Atelophobia:ateloron:2
+Atelophobia-old:ateloron:2
 Factory-Reset:factorytankman:2
 Trojan-Virus-b:ron-usb-b:2
 Trojan-Virus-b-old:tankmantrojan-2:2
@@ -21,5 +25,10 @@ Factory-Reset-b-old:factorytankman-2:2
 Trouble:ron:0
 Run:hellron:0
 Bijuu:ron:0
+Bijuu-old:ron:6
 Car Door:ron:0
 Number 12 Cock:ron:0
+Oneirophobia:ron:0
+Oneirophobia-old:ron:0
+Final-Onslaught:ron:0
+Holy-Fuck-Guys-The-Corrupt-Ron:ron:0

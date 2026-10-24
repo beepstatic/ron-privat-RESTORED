@@ -337,6 +337,51 @@ class Character extends FlxSprite
 				playAnim('idle');
 
 				flipX = true;
+			case 'bfc':
+				var tex = Paths.getSparrowAtlas('characters/corruptionbf', 'shared');
+				frames = tex;
+
+				trace(tex.frames.length);
+
+				animation.addByPrefix('idle', 'BF idle dance', 24, false);
+				animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
+				animation.addByPrefix('singDOWN', 'BF NOTE DOWN0', 24, false);
+				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
+				animation.addByPrefix('singRIGHT', 'BF NOTE RIGHT0', 24, false);
+				animation.addByPrefix('singLEFTmiss', 'BF NOTE LEFT MISS', 24, false);
+				animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
+				animation.addByPrefix('singUPmiss', 'BF NOTE UP MISS', 24, false);
+				animation.addByPrefix('singRIGHTmiss', 'BF NOTE RIGHT MISS', 24, false);
+				animation.addByPrefix('hey', 'BF HEY', 24, false);
+				animation.addByPrefix('hurt', 'BF hit', 24, false);
+				animation.addByPrefix('scared', 'BF idle shaking', 24, true);
+				animation.addByPrefix('firstDeath', 'BF dies', 24, false);
+				animation.addByPrefix('deathLoop', 'BF Dead Loop', 24, true);
+				animation.addByPrefix('deathConfirm', 'BF Dead confirm', 24, false);
+				animation.addByPrefix('dodge', 'boyfriend dodge', 24, false);
+				animation.addByPrefix('attack', 'boyfriend attack', 24, false);
+				animation.addByPrefix('pre-attack', 'bf pre attack', 24, false);
+
+				addOffset('idle', -5, 0);
+				addOffset('singLEFT', 5, -6);
+				addOffset('singDOWN', -20, -51);
+				addOffset('singUP', -46, 27);
+				addOffset('singRIGHT', -48, -7);
+				addOffset('singLEFTmiss', 7, 19);
+				addOffset('singDOWNmiss', -15, -19);
+				addOffset('singUPmiss', -46, 27);
+				addOffset('singRIGHTmiss', -44, 22);
+				addOffset('hey', -3, 5);
+				addOffset('hurt', 14, 18);
+				addOffset('scared', -4, 0);
+				addOffset('firstDeath', 37, 11);
+				addOffset('deathLoop', 37, 5);
+				addOffset('deathConfirm', 37, 69);
+				addOffset('dodge', -10, -16);
+				addOffset('attack', 294, 267);
+				addOffset('pre-attack', -40, -40);
+				playAnim('idle');
+				flipX = true;
 			case 'bf-b-old':
 				var tex = Paths.getSparrowAtlas('characters/LUG FRIEND', 'shared');
 				frames = tex;
@@ -869,6 +914,17 @@ class Character extends FlxSprite
 				addOffset("singLEFT", 98, -27);
 				addOffset("singRIGHT", -89, -51);
 				addOffset("singDOWN", 40, -120);
+			case 'bob':
+				tex = Paths.getSparrowAtlas('ron/characters/bob_asset');
+				frames = tex;
+				animation.addByPrefix('idle', "bob_idle", 24, false);
+				animation.addByPrefix('singUP', 'bob_UP', 24, false);
+				animation.addByPrefix('singDOWN', 'bob_DOWN', 24, false);
+				animation.addByPrefix('singLEFT', 'bob_LEFT', 24, false);
+				animation.addByPrefix('singRIGHT', 'bob_RIGHT', 24, false);
+				animation.addByPrefix('Transform', 'bob_transform', 24, false);
+				addOffset('idle');
+				flipX = true;
 		}
 
 		dance();

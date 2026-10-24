@@ -71,13 +71,10 @@ class FreeplayState extends MusicBeatState
 
 		// LOAD CHARACTERS
 
-// Decide which background to use with Math.random
-var bgKey:String = (Math.random() < 0.5) ? "menuBGBlueRon" : "menuBGBlue";
-trace("MainMenu: bgKey chosen = " + bgKey);
-
-// Load the chosen background
-var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image(bgKey));
-add(bg);
+		var bgKey:String = (Math.random() < 0.5) ? "menuBGBlueRon" : "menuBGBlue";
+		trace("MainMenu: bgKey chosen = " + bgKey);
+		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image(bgKey));
+		add(bg);
 
 
 		grpSongs = new FlxTypedGroup<Alphabet>();
@@ -85,21 +82,16 @@ add(bg);
 
 		for (i in 0...songs.length)
 		{
-			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true, false, true);
+			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName.replace("-", " "), true, false);
 			songText.isMenuItem = true;
 			songText.targetY = i;
+			songText.ID = i;
 			grpSongs.add(songText);
-
+			songText.resizeText(980);
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
 			icon.sprTracker = songText;
-
-			// using a FlxGroup is too much fuss!
 			iconArray.push(icon);
 			add(icon);
-
-			// songText.x += 40;
-			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
-			// songText.screenCenter(X);
 		}
 
 		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
@@ -120,7 +112,6 @@ add(bg);
 		add(comboText);
 
 		add(scoreText);
-
 		changeSelection();
 		changeDiff();
 
@@ -150,7 +141,6 @@ add(bg);
 
 			trace(md);
 		 */
-
 		super.create();
 	}
 

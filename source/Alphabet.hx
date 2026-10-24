@@ -38,7 +38,7 @@ class Alphabet extends FlxSpriteGroup
 	var xPosResetted:Bool = false;
 	var lastWasSpace:Bool = false;
 
-	var listOAlphabets:List<AlphaCharacter> = new List<AlphaCharacter>();
+	public var listOAlphabets:List<AlphaCharacter> = new List<AlphaCharacter>();
 
 	var splitWords:Array<String> = [];
 
@@ -247,6 +247,20 @@ class Alphabet extends FlxSpriteGroup
 
 			tmr.time = FlxG.random.float(0.04, 0.09);
 		}, splitWords.length);
+	}
+
+	public function resizeText(maxWidth:Float):Void
+	{
+		if (width > maxWidth && width > 0)
+		{
+			var textScale:Float = maxWidth / width;
+			scale.x = textScale;
+			for (letter in listOAlphabets)
+			{
+				letter.x *= textScale;
+				letter.offset.x *= textScale;
+			}
+		}
 	}
 
 	override function update(elapsed:Float)

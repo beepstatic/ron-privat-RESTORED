@@ -125,6 +125,7 @@ class PlayState extends MusicBeatState
 	public var originalX:Float;
 
 	public static var dad:Character;
+	public static var dad2:Character;
 	public static var gf:Character;
 	public static var boyfriend:Boyfriend;
 
@@ -243,6 +244,7 @@ class PlayState extends MusicBeatState
 	public function addObject(object:FlxBasic) { add(object); }
 	public function removeObject(object:FlxBasic) { remove(object); }
 
+	var uhoh:Bool = false;
 
 	override public function create()
 	{
@@ -832,7 +834,6 @@ class PlayState extends MusicBeatState
 				case 6: gfCheck = 'gf-pixel';
 			}
 		} else {gfCheck = SONG.gfVersion;}
-
 		var curGf:String = '';
 		switch (gfCheck)
 		{
@@ -845,11 +846,11 @@ class PlayState extends MusicBeatState
 			default:
 				curGf = 'gf';
 		}
-		
 		gf = new Character(400, 130, curGf);
 		gf.scrollFactor.set(0.95, 0.95);
 
 		dad = new Character(100, 100, SONG.player2);
+		dad2 = new Character(250, 400, 'bob');
 
 		var camPos:FlxPoint = new FlxPoint(dad.getGraphicMidpoint().x, dad.getGraphicMidpoint().y);
 
@@ -928,6 +929,10 @@ class PlayState extends MusicBeatState
 				dad.x += 70;
 				dad.y += 250;
 				camPos.set(dad.getGraphicMidpoint().x + 300, dad.getGraphicMidpoint().y);
+			case 'senpai':
+				dad.x += 150;
+				dad.y += 360;
+				camPos.set(dad.getGraphicMidpoint().x + 300, dad.getGraphicMidpoint().y);
 		}
 
 
@@ -953,8 +958,13 @@ class PlayState extends MusicBeatState
 				add(evilTrail);
 				// evilTrail.scrollFactor.set(1.1, 1.1);
 				}
-				case 'NOGFHAHA':
-					gf.y -= 626742734737;
+			case 'NOGFHAHA':
+				gf.y -= 626742734737;
+			case 'school':
+				boyfriend.x += 200;
+				boyfriend.y += 220;
+				gf.x += 180;
+				gf.y += 300;
 		}
 
 		if (!PlayStateChangeables.Optimize)
@@ -966,6 +976,7 @@ class PlayState extends MusicBeatState
 			add(boyfriend);
 		}
 
+		if (SONG.song == 'Oneirophobia' || SONG.song == 'Oneirophobia-old' || SONG.song == 'Final-Onslaught') add(dad2);
 
 		if (loadRep)
 		{
@@ -1337,6 +1348,7 @@ class PlayState extends MusicBeatState
 		startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
 		{
 			dad.dance();
+			if (SONG.song == 'Oneirophobia' || SONG.song == 'Oneirophobia-old' || SONG.song == 'Final-Onslaught') dad2.dance();
 			gf.dance();
 			boyfriend.playAnim('idle');
 
@@ -1425,7 +1437,7 @@ class PlayState extends MusicBeatState
 					});
 					FlxG.sound.play(Paths.sound('introGo' + altSuffix), 0.6);
 				case 4:
-					if (curSong == "Trojan-Virus")
+					if (curSong == "Trojan-Virus" || curSong == "Trojan-Virus-old")
 						{
 						var bruh:FlxSprite = new FlxSprite();
 						bruh.loadGraphic(Paths.image('ron/longbob'));
@@ -1673,9 +1685,21 @@ class PlayState extends MusicBeatState
 				if (daStrumTime < 0)
 					daStrumTime = 0;
 				var daNoteData:Int = Std.int(songNotes[1] % 4);
-
 				var gottaHitNote:Bool = section.mustHitSection;
-
+				var daNoteType:Int = songNotes[3];
+				var daGFNote:Bool = false;
+				var daNoteTypeRaw = songNotes[3];
+				if (Std.string(daNoteTypeRaw).toLowerCase() == "gf sing")
+				{
+					daGFNote = true;
+					daNoteType = 0;
+				}
+				else
+				{
+					daNoteType = Std.parseInt(daNoteTypeRaw);
+					if (Math.isNaN(daNoteType))
+						daNoteType = 0;
+				}
 				if (songNotes[1] > 3)
 				{
 					gottaHitNote = !section.mustHitSection;
@@ -1687,7 +1711,7 @@ class PlayState extends MusicBeatState
 				else
 					oldNote = null;
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
+				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, daNoteType, daGFNote);
 
 				if (!gottaHitNote && PlayStateChangeables.Optimize)
 					continue;
@@ -1704,7 +1728,7 @@ class PlayState extends MusicBeatState
 				{
 					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true);
+					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true, false, daNoteType, daGFNote);
 					sustainNote.scrollFactor.set();
 					unspawnNotes.push(sustainNote);
 
@@ -2621,31 +2645,29 @@ checkCodeInput();
 								altAnim = '-alt';
 						}
 	
+						var singChar:Character = (daNote.noteType == 0) ? dad : dad2;
 						switch (Math.abs(daNote.noteData))
 						{
 							case 2:
-								dad.playAnim('singUP' + altAnim, true);
+								singChar.playAnim('singUP' + altAnim, true);
 							case 3:
-								dad.playAnim('singRIGHT' + altAnim, true);
+								singChar.playAnim('singRIGHT' + altAnim, true);
 							case 1:
-								dad.playAnim('singDOWN' + altAnim, true);
+								singChar.playAnim('singDOWN' + altAnim, true);
 							case 0:
-								dad.playAnim('singLEFT' + altAnim, true);
+								singChar.playAnim('singLEFT' + altAnim, true);
 						}
 						//shakes the fuck out of your screen and hud -ekical
 						//now it drains your health because fuck you -ekical
-if (dad.curCharacter == 'hellron')
-{
-    FlxG.camera.shake(0.025, 0.1);
-    camHUD.shake(0.0055, 0.15);
-
-    // Only drain health if the current song is NOT "run"
-    if (curSong != 'run')
-    {
-        health -= 0.005;
-    }
-}
-						
+						if (dad.curCharacter == 'hellron')
+						{
+							FlxG.camera.shake(0.025, 0.1);
+							camHUD.shake(0.0055, 0.15);
+							if (curSong != 'run')
+							{
+								health -= 0.005;
+							}
+						}
 						if (FlxG.save.data.cpuStrums)
 						{
 							cpuStrums.forEach(function(spr:FlxSprite)
@@ -2664,14 +2686,11 @@ if (dad.curCharacter == 'hellron')
 									spr.centerOffsets();
 							});
 						}
-	
 						#if windows
 						if (luaModchart != null)
 							luaModchart.executeState('playerTwoSing', [Math.abs(daNote.noteData), Conductor.songPosition]);
 						#end
 
-						dad.holdTimer = 0;
-	
 						if (SONG.needsVoices)
 							vocals.volume = 1;
 	
@@ -2681,6 +2700,8 @@ if (dad.curCharacter == 'hellron')
 						daNote.kill();
 						notes.remove(daNote, true);
 						daNote.destroy();
+
+						singChar.holdTimer = 0;
 					}
 
 					if (daNote.mustPress && !daNote.modifiedByLua)
@@ -2728,7 +2749,7 @@ if (dad.curCharacter == 'hellron')
 									{
 										health -= 0.075;
 										vocals.volume = 0;
-										if (theFunne)
+										if ((theFunne) && (daNote.noteType == 0))
 											noteMiss(daNote.noteData, daNote);
 									}
 								}
@@ -2736,7 +2757,7 @@ if (dad.curCharacter == 'hellron')
 								{
 									health -= 0.075;
 									vocals.volume = 0;
-									if (theFunne)
+									if ((theFunne) && (daNote.noteType == 0))
 										noteMiss(daNote.noteData, daNote);
 								}
 							}
@@ -2979,40 +3000,58 @@ if (dad.curCharacter == 'hellron')
 
 			var daRating = daNote.rating;
 
-			switch(daRating)
+
+			if (daNote.noteType == 0)
 			{
-				case 'shit':
-					score = -300;
-					combo = 0;
-					misses++;
-					health -= 0;
-					ss = false;
-					shits++;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit -= 1;
-				case 'bad':
-					daRating = 'bad';
-					score = 0;
-					health -= 0;
-					ss = false;
-					bads++;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit += 0.50;
-				case 'good':
-					daRating = 'good';
-					score = 200;
-					ss = false;
-					goods++;
-					if (health < 2)
-						health += 0.04;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit += 0.75;
-				case 'sick':
-					if (health < 2)
-						health += 0.1;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit += 1;
-					sicks++;
+				switch(daRating)
+				{
+					case 'shit':
+						score = -300;
+						ss = false;
+						shits++;
+						uhoh = false;
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit -= 1;
+					case 'bad':
+						daRating = 'bad';
+						score = 0;
+						ss = false;
+						bads++;
+						uhoh = false;
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 0.50;
+					case 'good':
+						daRating = 'good';
+						score = 200;
+						ss = false;
+						goods++;
+						if (health < 2)
+							health += 0.04;
+						uhoh = false;
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 0.75;
+					case 'sick':
+						if (health < 2)
+							health += 0.1;
+						uhoh = false;
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 1;
+						sicks++;
+				}
+			}
+			else
+			{
+				// haha fuck you
+				score = -300;
+				//combo = 0;
+				misses++;
+				ss = false;
+				uhoh = true;
+				shits++;
+				if (FlxG.save.data.accuracyMod == 0)
+					totalNotesHit -= 1;
+					
+				boyfriend.playAnim('singDOWNmiss', true);
 			}
 
 			// trace('Wife accuracy loss: ' + wife + ' | Rating: ' + daRating + ' | Score: ' + score + ' | Weight: ' + (1 - wife));
@@ -3418,6 +3457,32 @@ if (dad.curCharacter == 'hellron')
 								boyfriend.holdTimer = daNote.sustainLength;
 							}
 						}
+						if (daNote.gfNote && !daNote.wasGoodHit)
+						{
+							var passedStrumLine:Bool = PlayStateChangeables.useDownscroll
+							? daNote.y > strumLine.y
+							: daNote.y < strumLine.y;
+
+							if (passedStrumLine)
+							{
+								var anim = switch (daNote.noteData)
+								{
+									case 0: "singLEFT";
+									case 1: "singDOWN";
+									case 2: "singUP";
+									case 3: "singRIGHT";
+									default: "idle";
+								};
+
+								dad2.playAnim(anim, true);
+								dad2.holdTimer = 0;
+
+								daNote.wasGoodHit = true;
+								daNote.kill();
+								notes.remove(daNote, true);
+								daNote.destroy();
+							}
+						}
 					}
 				});
 				
@@ -3749,20 +3814,49 @@ if (dad.curCharacter == 'hellron')
 						combo += 1;
 					}
 					else
-						totalNotesHit += 1;
-	
-
-					switch (note.noteData)
 					{
-						case 2:
-							boyfriend.playAnim('singUP', true);
-						case 3:
-							boyfriend.playAnim('singRIGHT', true);
-						case 1:
-							boyfriend.playAnim('singDOWN', true);
-						case 0:
-							boyfriend.playAnim('singLEFT', true);
+						health += 0.01;
+						totalNotesHit += 1;
 					}
+				
+					if (note.gfNote)
+					{
+						var anim:String = '';
+
+						switch (note.noteData)
+						{
+							case 0: anim = 'singLEFT';
+							case 1: anim = 'singDOWN';
+							case 2: anim = 'singUP';
+							case 3: anim = 'singRIGHT';
+						}
+
+						dad2.playAnim(anim, true);
+						dad2.holdTimer = 0;
+
+						note.wasGoodHit = true;
+						note.kill();
+						notes.remove(note, true);
+						note.destroy();
+						updateAccuracy();
+						return;
+					}
+	
+			if (!uhoh)
+			{
+				switch (note.noteData)
+				{
+					case 2:
+						boyfriend.playAnim('singUP', true);
+					case 3:
+						boyfriend.playAnim('singRIGHT', true);
+					case 1:
+						boyfriend.playAnim('singDOWN', true);
+					case 0:
+						boyfriend.playAnim('singLEFT', true);
+				}	
+			}
+					
 		
 					#if windows
 					if (luaModchart != null)
@@ -3958,17 +4052,8 @@ if (dad.curCharacter == 'hellron')
 
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
 		{
-			if (SONG.notes[Math.floor(curStep / 16)].changeBPM)
-			{
-				Conductor.changeBPM(SONG.notes[Math.floor(curStep / 16)].bpm);
-				FlxG.log.add('CHANGED BPM!');
-			}
-			// else
-			// Conductor.changeBPM(SONG.bpm);
-
-			// Dad doesnt interupt his own notes
-			if (SONG.notes[Math.floor(curStep / 16)].mustHitSection && dad.curCharacter != 'gf')
-				dad.dance();
+			if (SONG.notes[Math.floor(curStep / 16)].mustHitSection && dad.curCharacter != 'gf' && dad.holdTimer <= Conductor.stepCrochet * 0.001 && (dad.animation.curAnim == null || (!dad.animation.curAnim.name.startsWith('sing') && dad.animation.curAnim.name != 'idle'))) dad.dance();
+			if ((SONG.song == 'Oneirophobia' || SONG.song == 'Oneirophobia-old' || SONG.song == 'Final-Onslaught') && dad2.holdTimer <= Conductor.stepCrochet * 0.001 && (dad2.animation.curAnim == null || (!dad2.animation.curAnim.name.startsWith('sing') && (dad2.animation.curAnim.name != 'idle' || dad2.animation.curAnim.finished)))) dad2.dance();
 		}
 		// FlxG.log.add('change bpm' + SONG.notes[Std.int(curStep / 16)].changeBPM);
 		wiggleShit.update(Conductor.crochet);
@@ -4078,7 +4163,7 @@ if (dad.curCharacter == 'hellron')
 			}
 		}
 
-		if (curBeat == 0 && curSong == 'Trojan-Virus')
+		if (curBeat == 0 && (curSong == 'Trojan-Virus' || curSong == "Trojan-Virus-old"))
 			{
 				var bruh:FlxSprite = new FlxSprite();
 				bruh.loadGraphic(Paths.image('ron/longbob'));
@@ -4096,7 +4181,7 @@ if (dad.curCharacter == 'hellron')
 				});
 			}
 
-		if (curBeat == 8 && curSong == 'Trojan-Virus')
+		if (curBeat == 8 && (curSong == 'Trojan-Virus' || curSong == "Trojan-Virus-old"))
 			{
 				var bruh:FlxSprite = new FlxSprite();
 				bruh.loadGraphic(Paths.image('ron/longbob'));
